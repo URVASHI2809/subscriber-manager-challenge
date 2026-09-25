@@ -3,8 +3,10 @@ package com.interview.subscribermanager.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.interview.subscribermanager.model.Subscriber;
@@ -17,7 +19,7 @@ public class SubscriberService {
     private SubscriberRepository subscriberRepository;
 
     public Page<Subscriber> getAllSubscribers(int page, int size) {
-        return subscriberRepository.findAll(PageRequest.of(page, size));
+        return subscriberRepository.findAll(PageRequest.of(page, size, Sort.by("msisdn")));
     }
 
     public Optional<Subscriber> getSubscriberById(Integer id) {
@@ -37,7 +39,12 @@ public class SubscriberService {
                 }
             }
         }
-        return subscriberRepository.save(subscriber);
+
+        try {
+            return subscriberRepository.save(subscriber);
+        } catch (DataIntegrityViolationException ex) {
+            throw new IllegalArgumentException("MSISDN is already registered: " + msisdn, ex);
+        }
     }
 
     public void deleteSubscriber(Integer id) {

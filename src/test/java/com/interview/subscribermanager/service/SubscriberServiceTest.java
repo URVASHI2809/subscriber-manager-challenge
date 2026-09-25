@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.interview.subscribermanager.model.Subscriber;
 import com.interview.subscribermanager.repository.SubscriberRepository;
@@ -48,6 +49,7 @@ class SubscriberServiceTest {
         Pageable used = captor.getValue();
         assertEquals(0, used.getPageNumber());
         assertEquals(2, used.getPageSize());
+        assertEquals(Sort.by("msisdn"), used.getSort());
     }
 
     @Test
